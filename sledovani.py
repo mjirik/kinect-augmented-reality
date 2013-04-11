@@ -15,16 +15,22 @@ from autobahn.websocket import WebSocketClientFactory, \
                                connectWS
 import json
 
-Window_height = 800
-Window_width = 1500
+#Window_height = 800
+#Window_width = 1500
+
+Window_height = 550
+Window_width = 1100
+
+
+
 LOOP_TIME = 0.1
 
 host = "ws://147.228.47.141:9002" 
 
 data={}
 
-bod2="kos.png"
-#bod2="green_dot.png"
+Hkos="kos.png"
+bod2="green_dot.png"
 bg="pozadiWhite.jpg"
 
 class EchoClientProtocol(WebSocketClientProtocol):
@@ -108,6 +114,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.screen = pygame.display.set_mode((self.size),0,32)
         self.background = pygame.image.load(bg).convert()
         self.point2 = pygame.image.load(bod2).convert_alpha()
+        self.kos = pygame.image.load(Hkos).convert_alpha()
         pygame.display.update()
         
     def sledovani_run(self):
@@ -132,7 +139,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.xt = int(telotr[0])
         self.yt = int(telotr[1])
         
-        #pøidání bodù
+        #pridani bodu
         self.xk = int(krktr[0])
         self.yk = int(krktr[1])
         
@@ -144,7 +151,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         
         
         
-       # zmìna velikosti obrazku podle vzdalenosti
+       # zmena velikosti obrazku podle vzdalenosti
 #        vzdalenost = [1,1,torso["Z"]]
 #        self.vz = int(vzdalenost[2]/500)
 #        
@@ -152,17 +159,41 @@ class EchoClientProtocol(WebSocketClientProtocol):
 #        self.width = 340/self.vz
 #        self.height = 400/self.vz
         
+        
+        
 #        self.width = abs(krk[1]-telo[1])*2
 #        self.height = abs(krk[1]-telo[1])*2
         
         
-        self.point2 = pygame.transform.scale(self.point2, (int(self.width), int(self.height)))
+#        self.point2 = pygame.transform.scale(self.point2, (int(self.width), int(self.height)))
         
         self.xt -= self.point2.get_width()/2
         self.yt -= self.point2.get_height()/2
+        
+        self.xk -= self.point2.get_width()/2
+        self.yk -= self.point2.get_height()/2
+        
+        self.xh -= self.point2.get_width()/2
+        self.yh -= self.point2.get_height()/2
+        
+        self.xObr = self.xt
+        self.yObr = (self.yt - self.yk)/2 + self.yk
+        
+        self.xObr -= self.kos.get_width()/2
+        self.yObr -= self.kos.get_height()/2
                 
         self.screen.blit(self.background,(0,0))
         self.screen.blit(self.point2, (self.xt,self.yt))
+        self.screen.blit(self.point2, (self.xk,self.yk))
+        #self.screen.blit(self.point2, (self.xh,self.yh))
+        self.screen.blit(self.kos, (self.xObr,self.yObr))
+        
+        print "y body"
+        print self.yk
+        print self.yt
+        print self.yObr
+        
+        
         pygame.display.update()
         
         

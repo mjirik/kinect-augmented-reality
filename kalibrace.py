@@ -15,8 +15,12 @@ from autobahn.websocket import WebSocketClientFactory, \
                                connectWS
 import json
 
-Window_height = 800
-Window_width = 1500
+#Window_height = 800
+#Window_width = 1500
+
+Window_height = 550
+Window_width = 1100
+
 LOOP_TIME = 0.1
 
 host = "ws://147.228.47.141:9002" 
