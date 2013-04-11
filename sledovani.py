@@ -114,29 +114,43 @@ class EchoClientProtocol(WebSocketClientProtocol):
         print('sledovani')
         torso = self.body["Torso"]
         neck = self.body["Neck"]
+        head = self.body["Head"]
         #import pdb; pdb.set_trace()
-        krk = [1,neck["Y"],1]
+        krk = [neck["X"],neck["Y"],1]
         telo = [torso["X"],torso["Y"],1]
-        
-        
-        
-        
+        hlava = [head["X"],head["Y"],1]
         
         
         with open('matice_kal','rb') as f:
             self.matice = pickle.load(f)
-        hlavatr = np.dot(self.matice,telo)
-        print hlavatr
-        self.x = int(hlavatr[0])
-        self.y = int(hlavatr[1])
+            
+        telotr = np.dot(self.matice,telo)
+        krktr = np.dot(self.matice,krk)
+        hlavatr = np.dot(self.matice,hlava)
         
-       
-        vzdalenost = [1,1,torso["Z"]]
-        self.vz = int(vzdalenost[2]/500)
+        print telotr
+        self.xt = int(telotr[0])
+        self.yt = int(telotr[1])
         
-        print vzdalenost[2]
-        self.width = 340/self.vz
-        self.height = 400/self.vz
+        #pøidání bodù
+        self.xk = int(krktr[0])
+        self.yk = int(krktr[1])
+        
+        self.xh = int(hlavatr[0])
+        self.yh = int(hlavatr[1])
+        
+        
+        
+        
+        
+        
+       # zmìna velikosti obrazku podle vzdalenosti
+#        vzdalenost = [1,1,torso["Z"]]
+#        self.vz = int(vzdalenost[2]/500)
+#        
+#        print vzdalenost[2]
+#        self.width = 340/self.vz
+#        self.height = 400/self.vz
         
 #        self.width = abs(krk[1]-telo[1])*2
 #        self.height = abs(krk[1]-telo[1])*2
@@ -144,11 +158,11 @@ class EchoClientProtocol(WebSocketClientProtocol):
         
         self.point2 = pygame.transform.scale(self.point2, (int(self.width), int(self.height)))
         
-        self.x -= self.point2.get_width()/2
-        self.y -= self.point2.get_height()/2
+        self.xt -= self.point2.get_width()/2
+        self.yt -= self.point2.get_height()/2
                 
         self.screen.blit(self.background,(0,0))
-        self.screen.blit(self.point2, (self.x,self.y))
+        self.screen.blit(self.point2, (self.xt,self.yt))
         pygame.display.update()
         
         
