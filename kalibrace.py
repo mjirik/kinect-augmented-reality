@@ -3,7 +3,7 @@ Created on 18.12.2012
 
 @author: misa
 '''
-#import cv2
+import pickle
 import numpy as np
 import sys, pygame
 import autobahn
@@ -15,8 +15,8 @@ from autobahn.websocket import WebSocketClientFactory, \
                                connectWS
 import json
 
-Window_height = 500
-Window_width = 800
+Window_height = 800
+Window_width = 1500
 LOOP_TIME = 0.1
 
 host = "ws://147.228.47.141:9002" 
@@ -148,8 +148,8 @@ class EchoClientProtocol(WebSocketClientProtocol):
 #            elif self.stav == 'sledovani':
 #                self.sledovani_run()
         #pygame.display.update()
-        
-        self.bod(x = self.kalibPtsX[self.actualPointInd], y = self.kalibPtsY[self.actualPointInd])
+        if self.stav == 'kalibrace':
+            self.bod(x = self.kalibPtsX[self.actualPointInd], y = self.kalibPtsY[self.actualPointInd])
         
         pygame.display.flip()
         reactor.callLater(LOOP_TIME, self.tick)
@@ -202,12 +202,15 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.kalibPtsX = [50, Window_width - 50,  Window_width - 50, 50, 1]
         self.kalibPtsY = [50, 50, Window_height - 50, Window_height - 50, 1]
         
+        
         self.bod(x = self.kalibPtsX[0], y = self.kalibPtsY[0])
         
         pass
-
+        
     def kalibrace_run(self):
         
+       
+            
         
         head = self.body["Head"]
         rhand = self.body["RightHand"]
@@ -255,8 +258,12 @@ class EchoClientProtocol(WebSocketClientProtocol):
             fp = np.array([[self.projPts[0][0],self.projPts[1][0],self.projPts[2][0 ],self.projPts[3][0]],[self.projPts[0][1],self.projPts[1][1],self.projPts[2][1],self.projPts[3][1]],[1,1,1,1]])
             tp = np.array([[self.kinectPts[0][0],self.kinectPts[1][0],self.kinectPts[2][0],self.kinectPts[3][0]],[self.kinectPts[0][1],self.kinectPts[1][1],self.kinectPts[2][1],self.kinectPts[3][1]],[1,1,1,1]])
             self.H=Haffine_from_points(fp, tp)
+            
+            
             print fp
             print self.H
+            with open('matice_kal', 'wb') as f:
+                pickle.dump(self.H,f)
             
     def sledovani_run(self):
         print('sledovani')
