@@ -136,7 +136,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         pygame.display.update()           
         
         
-    def kalibrace_init(self):
+    def kalibrace_init(self, new_kalib = True):
         pygame.init()
         pygame.display.set_caption('Vykresleni bodu')
         self.size = self.width, self.height = Window_width,Window_height
@@ -196,6 +196,15 @@ class EchoClientProtocol(WebSocketClientProtocol):
             with open('matice_kal2', 'wb') as f:
                 pickle.dump(self.H,f)
                 
+                
+def projekce(point, kalib_params, new_kalib = True):
+    if new_kalib:
+        pass
+    else:
+        proj_point = np.dot(kalib_params, point)
+        
+    return proj_point
+    
                 
 if __name__ == '__main__':
     

@@ -14,6 +14,7 @@ from autobahn.websocket import WebSocketClientFactory, \
                                WebSocketClientProtocol, \
                                connectWS
 import json
+import kalibrace2
 
 #Window_height = 800
 #Window_width = 1500
@@ -117,6 +118,9 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.kos = pygame.image.load(Hkos).convert_alpha()
         pygame.display.update()
         
+        with open('matice_kal','rb') as f:
+            self.matice = pickle.load(f)
+        
     def sledovani_run(self):
         print('sledovani')
         torso = self.body["Torso"]
@@ -128,12 +132,11 @@ class EchoClientProtocol(WebSocketClientProtocol):
         hlava = [head["X"],head["Y"],1]
         
         
-        with open('matice_kal','rb') as f:
-            self.matice = pickle.load(f)
+
             
-        telotr = np.dot(self.matice,telo)
-        krktr = np.dot(self.matice,krk)
-        hlavatr = np.dot(self.matice,hlava)
+        telotr = kalibrace2.projekce(telo, self.matice, False)
+        krktr = kalibrace2.projekce(krk, self.matice, False)
+        hlavatr = kalibrace2.projekce(hlava, self.matice, False)
         
         print telotr
         self.xt = int(telotr[0])
