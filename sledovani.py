@@ -118,37 +118,41 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.kos = pygame.image.load(Hkos).convert_alpha()
         pygame.display.update()
         
-        with open('matice_kal','rb') as f:
-            self.matice = pickle.load(f)
+        with open('matice_kal2','rb') as f:
+            self.kalib_params = pickle.load(f)
         
     def sledovani_run(self):
         print('sledovani')
-        torso = self.body["Torso"]
-        neck = self.body["Neck"]
-        head = self.body["Head"]
-        #import pdb; pdb.set_trace()
-        krk = [neck["X"],neck["Y"],1]
-        telo = [torso["X"],torso["Y"],1]
-        hlava = [head["X"],head["Y"],1]
-        
-        
-
+        try: 
+            torso = self.body["Torso"]
+            neck = self.body["Neck"]
+            head = self.body["Head"]
+            #import pdb; pdb.set_trace()
+            krk = [neck["X"],neck["Y"], neck["Z"]]
+            telo = [torso["X"],torso["Y"],torso["Z"]]
+            hlava = [head["X"],head["Y"],head["Z"]]
             
-        telotr = kalibrace2.projekce(telo, self.matice, False)
-        krktr = kalibrace2.projekce(krk, self.matice, False)
-        hlavatr = kalibrace2.projekce(hlava, self.matice, False)
-        
-        print telotr
-        self.xt = int(telotr[0])
-        self.yt = int(telotr[1])
-        
-        #pridani bodu
-        self.xk = int(krktr[0])
-        self.yk = int(krktr[1])
-        
-        self.xh = int(hlavatr[0])
-        self.yh = int(hlavatr[1])
-        
+            
+    
+            print telo
+            telotr = kalibrace2.projekce(telo, self.kalib_params)
+            krktr = kalibrace2.projekce(krk, self.kalib_params)
+            hlavatr = kalibrace2.projekce(hlava, self.kalib_params)
+            
+            print "po kalibraci ", telotr
+            self.xt = int(telotr[0])
+            self.yt = int(telotr[1])
+            
+            #pridani bodu
+            self.xk = int(krktr[0])
+            self.yk = int(krktr[1])
+            
+            self.xh = int(hlavatr[0])
+            self.yh = int(hlavatr[1])
+            
+        except Exception as e:
+            print "problem v prijate zprave" 
+            print e
         
         
         
@@ -185,11 +189,19 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.xObr -= self.kos.get_width()/2
         self.yObr -= self.kos.get_height()/2
                 
+        #zmìna rozmìrù obrázku        
+        
+        
+        self.width =
+        self.height =         
+                
+        self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
+                
         self.screen.blit(self.background,(0,0))
         self.screen.blit(self.point2, (self.xt,self.yt))
         self.screen.blit(self.point2, (self.xk,self.yk))
         #self.screen.blit(self.point2, (self.xh,self.yh))
-        self.screen.blit(self.kos, (self.xObr,self.yObr))
+        #self.screen.blit(self.kos, (self.xObr,self.yObr))
         
         print "y body"
         print self.yk
