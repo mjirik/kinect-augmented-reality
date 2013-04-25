@@ -14,9 +14,25 @@ def kalibrace_cv2():
 # http://upload.wikimedia.org/wikipedia/commons/0/02/Face_colored_cube.png
 # 3D body (z Kinectu)
     obj_points = [[0,0,0],[1,0,0],[1,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]]
+    
+    obj_points = [[  666.,   -91.,  3223.],
+                  [ -402.,  -112.,  3366.],
+                  [  -82.,  -884.,  3038.],
+                  [  930.,  -819.,  3053.],
+                  [  897.,  -777.,  2966.],
+                  [  -27.,  -820.,  3126.],
+                  [   -9.,  -826.,  3102.],
+                  [  914.,  -843.,  3101.]]
 # 2D body z projektoru
     img_points = [[120,729],[434,980],[897,795],[88,210],[429,368],[938,237],[552,124]]
-
+    img_points = [[  50. ,  50.],
+                  [ 950.,   50.],
+                  [ 950. , 450.],
+                  [  80. , 450.],
+                  [  90. ,  80.],
+                  [ 920. ,  50.],
+                  [ 930. , 420.],
+                  [  60. , 450.]]
     obj_points = np.array(obj_points,'float32')
     img_points = np.array(img_points,'float32')
 
@@ -24,6 +40,8 @@ def kalibrace_cv2():
     h = 1050
     size = (w,h)
 
+    print obj_points
+    print img_points
     camera_matrix = np.zeros((3, 3),'float32')
     camera_matrix[0,0]= 2200.0
     camera_matrix[1,1]= 2200.0
@@ -46,7 +64,10 @@ def kalibrace_cv2():
 # ověření: transformace bodu
     #pokusny_bod = [[-9.7,3.0,4.6]]
     pokusny_bod = [[1,0.5,0]]
-    ip, jacob = cv2.projectPoints(np.array(pokusny_bod), 
+    
+    pokusny_bod_np = np.array(pokusny_bod)
+    print pokusny_bod_np.dtype
+    ip, jacob = cv2.projectPoints(pokusny_bod_np, 
             np.array(rvecs), 
             np.array(tvecs), 
             np.array(camera_matrix), 
