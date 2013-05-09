@@ -20,10 +20,10 @@ from autobahn.websocket import WebSocketClientFactory, \
 import json
 
 
-#Window_height = 800
-#Window_width = 1500
-Window_height = 500
-Window_width = 1000
+Window_height = 700
+Window_width = 1300
+#Window_height = 500
+#Window_width = 1000
 LOOP_TIME = 0.1
 
 host = "ws://147.228.47.141:9002" 
@@ -33,6 +33,7 @@ data={}
 bod1="red_dot.png"
 bg="pozadiWhite.jpg"
 
+print "neco"
 def Haffine_from_points(fp,tp):
     """
     find H, affine transformation, such that 
@@ -148,8 +149,12 @@ class EchoClientProtocol(WebSocketClientProtocol):
         pygame.display.set_caption('Vykresleni bodu')
         self.size = self.width, self.height = Window_width,Window_height
         self.screen=pygame.display.set_mode((self.size),0,32)
-        self.background=pygame.image.load(bg).convert()
+        self.background=pygame.image.load(bg).convert_alpha()
+        self.background = pygame.transform.scale(self.background, self.size)
         self.point=pygame.image.load(bod1).convert_alpha()
+        
+        r=self.background.get_size()
+        print r
         if pygame.font:
             pismo = pygame.font.Font(None, 28)
             text = pismo.render(u"Lovou ruku pøiložte na zobrazovaný bod a pravou zvednìte nad hlavu",1, (10, 10, 10))
@@ -157,9 +162,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
             textPozice.centerx = self.screen.get_rect().centerx
             self.screen.blit(text, textPozice)
             
-            print textPozice
-            print textPozice.centerx
-            print text
+            
             
         self.povoleno = True
         
@@ -274,7 +277,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
                 retval,camera_matrix,dist_coefs,rvecs,tvecs = cv2.calibrateCamera([obj_points],[img_points],size,camera_matrix,dist_coefs,flags=cv.CV_CALIB_USE_INTRINSIC_GUESS)
                 
                 kalib_params = (retval,camera_matrix,dist_coefs,rvecs,tvecs)
-                with open('matice_kal', 'wb') as f:
+                with open('matice_kal2', 'wb') as f:
                     pickle.dump(kalib_params,f)
                 print "Kalibrace dokoncena"    
             pass
