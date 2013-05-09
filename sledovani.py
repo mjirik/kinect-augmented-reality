@@ -4,6 +4,7 @@ Created on 14.3.2013
 @author: misa
 '''
 import pickle
+import math
 import numpy as np
 import sys, pygame
 import autobahn
@@ -16,11 +17,11 @@ from autobahn.websocket import WebSocketClientFactory, \
 import json
 import kalibrace2
 
-#Window_height = 800
-#Window_width = 1500
+Window_height = 700
+Window_width = 1300
 
-Window_height = 550
-Window_width = 1100
+#Window_height = 550
+#Window_width = 1100
 
 
 
@@ -163,8 +164,8 @@ class EchoClientProtocol(WebSocketClientProtocol):
 #        self.vz = int(vzdalenost[2]/500)
 #        
 #        print vzdalenost[2]
-#        self.width = 340/self.vz
-#        self.height = 400/self.vz
+#        self.width = 600/self.vz
+#        self.height = 800/self.vz
         
         
         
@@ -180,28 +181,38 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.xk -= self.point2.get_width()/2
         self.yk -= self.point2.get_height()/2
         
-        self.xh -= self.point2.get_width()/2
-        self.yh -= self.point2.get_height()/2
-        
-        self.xObr = self.xt
+#        self.xh -= self.point2.get_width()/2
+#        self.yh -= self.point2.get_height()/2
+#        
+        self.xObr = (self.xt - self.xk)/2 + self.xk
         self.yObr = (self.yt - self.yk)/2 + self.yk
         
         self.xObr -= self.kos.get_width()/2
         self.yObr -= self.kos.get_height()/2
                 
-        #zmìna rozmìrù obrázku        
+             
         
         
-        self.width =
-        self.height =         
-                
+        self.height = self.yt - self.yk 
+        self.width = self.kos.get_height()/1.3
+        self.kos = pygame.image.load(Hkos).convert_alpha()
+        
+        prepona = math.sqrt(math.pow((self.xObr-self.xk), 2)+math.pow((self.yObr-self.yk),2))
+        prilehla = (self.yt - self.yk)/2
+        cosinus = (prilehla/prepona)
+        angle = math.pow(-cosinus,-1)*(180/math.pi)+45
+        
+        print "uhel",angle
+         
+           
         self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
+        self.kos = pygame.transform.rotate(self.kos, angle)  
                 
         self.screen.blit(self.background,(0,0))
         self.screen.blit(self.point2, (self.xt,self.yt))
         self.screen.blit(self.point2, (self.xk,self.yk))
         #self.screen.blit(self.point2, (self.xh,self.yh))
-        #self.screen.blit(self.kos, (self.xObr,self.yObr))
+        self.screen.blit(self.kos, (self.xObr,self.yObr))
         
         print "y body"
         print self.yk
