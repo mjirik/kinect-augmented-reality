@@ -20,10 +20,10 @@ from autobahn.websocket import WebSocketClientFactory, \
 import json
 
 
-Window_height = 700
-Window_width = 1300
-#Window_height = 500
-#Window_width = 1000
+#Window_height = 700
+#Window_width = 1300
+Window_height = 500
+Window_width = 1000
 LOOP_TIME = 0.1
 
 host = "ws://147.228.47.141:9002" 
@@ -31,7 +31,7 @@ host = "ws://147.228.47.141:9002"
 data={}
 
 bod1="red_dot.png"
-bg="pozadiWhite.jpg"
+bg="black.png"
 
 print "neco"
 def Haffine_from_points(fp,tp):
