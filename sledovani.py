@@ -17,11 +17,11 @@ from autobahn.websocket import WebSocketClientFactory, \
 import json
 import kalibrace2
 
-Window_height = 700
-Window_width = 1300
+#Window_height = 700
+#Window_width = 1300
 
-#Window_height = 550
-#Window_width = 1100
+Window_height = 550
+Window_width = 1100
 
 
 
@@ -33,7 +33,7 @@ data={}
 
 Hkos="kos.png"
 bod2="green_dot.png"
-bg="pozadiWhite.jpg"
+bg="black.png"
 
 class EchoClientProtocol(WebSocketClientProtocol):
     def sendHello(self):
@@ -197,12 +197,18 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.width = self.kos.get_height()/1.3
         self.kos = pygame.image.load(Hkos).convert_alpha()
         
-        prepona = math.sqrt(math.pow((self.xObr-self.xk), 2)+math.pow((self.yObr-self.yk),2))
+        prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
         prilehla = (self.yt - self.yk)/2
         cosinus = (prilehla/prepona)
         angle = math.pow(-cosinus,-1)*(180/math.pi)+45
         
-        print "uhel",angle
+#        u1 = math.fabs(self.xt-self.xk)
+#        u2 = math.fabs(self.yt-self.yk)  
+#        v1 = math.fabs(self.xObr-self.xk)
+#        v2 = math.fabs(self.yObr-self.yk)
+#        cosinus = (u1*v1+u2*v2)/((math.sqrt(math.pow(u1,2)+math.pow(u2,2)))*(math.sqrt(math.pow(v1,2)+math.pow(v2,2))))
+#        angle = math.pow(-cosinus,-1)*(180/math.pi)+45
+#        print "uhel",angle
          
            
         self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
