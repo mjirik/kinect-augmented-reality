@@ -3,4 +3,4 @@ kinect-augmented-reality
 
 kinect-augmented-reality
 
-Spustení aplikace
+Spusteni aplikace
