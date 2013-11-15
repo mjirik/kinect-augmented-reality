@@ -51,12 +51,8 @@ class EchoClientProtocol(WebSocketClientProtocol):
     
     def update(self,body):
         
-        if mode == 'demo':    
-            self.body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-400),'Z':50},
-                         'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
-                         'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
-        else:
-            self.body = body    
+        
+        self.body = body    
         
     
     def onMessage(self, msg, binary):
@@ -91,6 +87,10 @@ class EchoClientProtocol(WebSocketClientProtocol):
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 reactor.stop() # just stop somehow
                 
+        if mode == 'demo':    
+            self.body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-400),'Z':50},
+                         'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
+                         'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
         
                     
         pygame.display.flip()
