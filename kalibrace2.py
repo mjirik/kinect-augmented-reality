@@ -33,7 +33,7 @@ data={}
 bod1="red_dot.png"
 bg="black.png"
 
-print "neco"
+
 def Haffine_from_points(fp,tp):
     """
     find H, affine transformation, such that 
@@ -144,7 +144,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         pygame.display.update()           
         
         
-    def kalibrace_init(self, new_kalib = False):
+    def kalibrace_init(self, mode):
         pygame.init()
         pygame.display.set_caption('Vykresleni bodu')
         self.size = self.width, self.height = Window_width,Window_height
@@ -154,7 +154,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.point=pygame.image.load(bod1).convert_alpha()
         
         r=self.background.get_size()
-        print r
+        
         if pygame.font:
             pismo = pygame.font.Font(None, 28)
             text = pismo.render(u"Lovou ruku pøiložte na zobrazovaný bod a pravou zvednìte nad hlavu",1, (10, 10, 10))
@@ -301,9 +301,9 @@ class EchoClientProtocol(WebSocketClientProtocol):
                 print "Kalibrace dokoncena" 
                 
                 
-def projekce(point, kalib_params, new_kalib = False):
+def projekce(point, kalib_params, mode):
     
-    if new_kalib:
+    if mode=='old':
         import cv2
         retval,camera_matrix,dist_coefs,rvecs,tvecs = kalib_params
         #point = [[280,-23.0,641]]
@@ -318,9 +318,12 @@ def projekce(point, kalib_params, new_kalib = False):
             np.array(dist_coefs))
         
         proj_point = ip[0,0]
-    else:
+    if mode=='new':
         point[2]=1
         proj_point = np.dot(kalib_params, point)
+        
+    if mode=='off':
+        proj_point = point    
         
     return proj_point
     

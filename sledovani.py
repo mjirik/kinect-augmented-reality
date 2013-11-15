@@ -23,7 +23,7 @@ import kalibrace2
 Window_height = 550
 Window_width = 1100
 
-
+mode = 'demo'
 
 LOOP_TIME = 0.1
 
@@ -51,8 +51,13 @@ class EchoClientProtocol(WebSocketClientProtocol):
     
     def update(self,body):
         
-        self.body = body    
- 
+        if mode == 'demo':    
+            self.body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-400),'Z':50},
+                         'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
+                         'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
+        else:
+            self.body = body    
+        
     
     def onMessage(self, msg, binary):
         
@@ -79,14 +84,15 @@ class EchoClientProtocol(WebSocketClientProtocol):
     def tick(self):
         #print 'tik'
         #self.screen.fill((255,255,255))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 reactor.stop() # just stop somehow
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 reactor.stop() # just stop somehow
                 
-                
-                
+        
+                    
         pygame.display.flip()
         reactor.callLater(LOOP_TIME, self.tick)        
         
@@ -134,11 +140,13 @@ class EchoClientProtocol(WebSocketClientProtocol):
             hlava = [head["X"],head["Y"],head["Z"]]
             
             
-    
-            print telo
-            telotr = kalibrace2.projekce(telo, self.kalib_params)
-            krktr = kalibrace2.projekce(krk, self.kalib_params)
-            hlavatr = kalibrace2.projekce(hlava, self.kalib_params)
+            kalib_mode = 'old'
+            if mode == 'demo':
+                kalib_mode = 'off'
+            
+            telotr = kalibrace2.projekce(telo, self.kalib_params, mode = kalib_mode)
+            krktr = kalibrace2.projekce(krk, self.kalib_params, mode = kalib_mode)
+            hlavatr = kalibrace2.projekce(hlava, self.kalib_params, mode = kalib_mode)
             
             print "po kalibraci ", telotr
             self.xt = int(telotr[0])
