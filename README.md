@@ -1,4 +1,4 @@
-Spuuštění aplikace 
+Spuštění aplikace 
 ========================
 
 Kalibraci spustíme prostřednictvím souboru kalibrace2.py. Výstupem toho programu je kalibrační matice.
