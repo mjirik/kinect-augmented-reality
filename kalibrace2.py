@@ -306,7 +306,6 @@ def projekce(point, kalib_params, mode):
     if mode=='old':
         import cv2
         retval,camera_matrix,dist_coefs,rvecs,tvecs = kalib_params
-        #point = [[280,-23.0,641]]
         point_np = np.array([point], dtype = np.float64)
         print point_np.dtype
         print point_np
