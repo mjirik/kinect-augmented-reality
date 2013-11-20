@@ -289,7 +289,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
             if self.actualPointInd == 4:
                 #self.stav = 'sledovani'       
                  
-                #print self.projPts
+                
                 fp = np.array([[self.projPts[0][0],self.projPts[1][0],self.projPts[2][0 ],self.projPts[3][0]],[self.projPts[0][1],self.projPts[1][1],self.projPts[2][1],self.projPts[3][1]],[1,1,1,1]])
                 tp = np.array([[self.kinectPts[0][0],self.kinectPts[1][0],self.kinectPts[2][0],self.kinectPts[3][0]],[self.kinectPts[0][1],self.kinectPts[1][1],self.kinectPts[2][1],self.kinectPts[3][1]],[1,1,1,1]])
                 self.H=Haffine_from_points(fp, tp)
