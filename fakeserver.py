@@ -8,7 +8,7 @@ from autobahn.websocket import WebSocketServerFactory, \
                                listenWS
                                
 Window_height = 700
-Window_width = 1300                               
+Window_width = 1300                              
 
 
 #  body = {'Torso':{'X':300,'Y':50,'Z':50},
