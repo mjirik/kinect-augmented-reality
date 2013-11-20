@@ -15,27 +15,40 @@ from autobahn.websocket import WebSocketClientFactory, \
                                WebSocketClientProtocol, \
                                connectWS
 import json
+import threading
 import kalibrace2
 
-#Window_height = 700
-#Window_width = 1300
+Window_height = 700
+Window_width = 1300
 
-Window_height = 550
-Window_width = 1100
+# Window_height = 550
+# Window_width = 1100
 
 mode = 'demo'
 
 LOOP_TIME = 0.1
 
-host = "ws://147.228.47.141:9002" 
+if mode == 'demo':
+
+    host = "ws://localhost:9000"
+    import fakeserver
+    def vlakno():
+        fakeserver.main()
+    v1 = threading.Thread(target = vlakno)
+    v1.start()    
+    
+else:
+    host = "ws://147.228.47.141:9002" 
 
 data={}
 
 Hkos="kos.png"
+bod1 = "red_dot.png"
 bod2="green_dot.png"
 bg="black.png"
+#bg="pozadiWhite.jpg"
 
-class EchoClientProtocol(WebSocketClientProtocol):
+class KinectClientProtocol(WebSocketClientProtocol):
     def sendHello(self):
         self.sendMessage("skeleton")
             
@@ -43,6 +56,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.sendMessage("skeleton")
  
     def onOpen(self):
+        print "op"
         self.sledovani_init()
         self.sendHello()
         self.stav = 'sledovani'
@@ -53,10 +67,8 @@ class EchoClientProtocol(WebSocketClientProtocol):
         
         
         self.body = body    
-        
     
     def onMessage(self, msg, binary):
-        
         print "Got echo: " + msg
         
         self.msg = msg
@@ -68,8 +80,8 @@ class EchoClientProtocol(WebSocketClientProtocol):
             data = json.loads( msg )
          
             self.body = data[0]
-            if self.stav == 'sledovani':
-                self.sledovani_run()
+#             if self.stav == 'sledovani':
+#                 self.sledovani_run()
             
             pygame.display.update()
             
@@ -87,12 +99,15 @@ class EchoClientProtocol(WebSocketClientProtocol):
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 reactor.stop() # just stop somehow
                 
-        if mode == 'demo':    
-            self.body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-400),'Z':50},
-                         'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
-                         'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
-        
+        #if mode == 'demo':    
+        #    self.body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-400),'Z':50},
+        #                 'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
+        #                 'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
+        #    print self.body
                     
+        print "hhh"  
+        self.sledovani_run()  
+        pygame.display.update()          
         pygame.display.flip()
         reactor.callLater(LOOP_TIME, self.tick)        
         
@@ -121,10 +136,12 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.size = self.width, self.height = Window_width,Window_height
         self.screen = pygame.display.set_mode((self.size),0,32)
         self.background = pygame.image.load(bg).convert()
+        self.point1 = pygame.image.load(bod1).convert_alpha()
         self.point2 = pygame.image.load(bod2).convert_alpha()
         self.kos = pygame.image.load(Hkos).convert_alpha()
         pygame.display.update()
         
+#         if mode != 'demo':
         with open('matice_kal2','rb') as f:
             self.kalib_params = pickle.load(f)
         
@@ -138,17 +155,25 @@ class EchoClientProtocol(WebSocketClientProtocol):
             krk = [neck["X"],neck["Y"], neck["Z"]]
             telo = [torso["X"],torso["Y"],torso["Z"]]
             hlava = [head["X"],head["Y"],head["Z"]]
+            print krk
+            print torso
+            print hlava
             
             
             kalib_mode = 'old'
             if mode == 'demo':
                 kalib_mode = 'off'
+            print kalib_mode
+            telotr = kalibrace2.projekce(telo, self.kalib_params,mode = kalib_mode)
+            krktr = kalibrace2.projekce(krk, self.kalib_params,mode = kalib_mode)
+            hlavatr = kalibrace2.projekce(hlava, self.kalib_params,mode = kalib_mode)
             
-            telotr = kalibrace2.projekce(telo, self.kalib_params, mode = kalib_mode)
-            krktr = kalibrace2.projekce(krk, self.kalib_params, mode = kalib_mode)
-            hlavatr = kalibrace2.projekce(hlava, self.kalib_params, mode = kalib_mode)
+            print "po kalibraci "
+            print "torso", telotr
+            print "neck", krktr
+            print "head", hlavatr
             
-            print "po kalibraci ", telotr
+            
             self.xt = int(telotr[0])
             self.yt = int(telotr[1])
             
@@ -161,7 +186,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
             
         except Exception as e:
             print "problem v prijate zprave" 
-            print e
+            
         
         
         
@@ -186,6 +211,9 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.xt -= self.point2.get_width()/2
         self.yt -= self.point2.get_height()/2
         
+        self.xh -= self.point2.get_width()/2
+        self.yh -= self.point2.get_height()/2
+        
         self.xk -= self.point2.get_width()/2
         self.yk -= self.point2.get_height()/2
         
@@ -205,28 +233,21 @@ class EchoClientProtocol(WebSocketClientProtocol):
         self.width = self.kos.get_height()/1.3
         self.kos = pygame.image.load(Hkos).convert_alpha()
         
-        prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
-        prilehla = (self.yt - self.yk)/2
-        cosinus = (prilehla/prepona)
-        angle = math.pow(-cosinus,-1)*(180/math.pi)+45
-        
-#        u1 = math.fabs(self.xt-self.xk)
-#        u2 = math.fabs(self.yt-self.yk)  
-#        v1 = math.fabs(self.xObr-self.xk)
-#        v2 = math.fabs(self.yObr-self.yk)
-#        cosinus = (u1*v1+u2*v2)/((math.sqrt(math.pow(u1,2)+math.pow(u2,2)))*(math.sqrt(math.pow(v1,2)+math.pow(v2,2))))
-#        angle = math.pow(-cosinus,-1)*(180/math.pi)+45
-#        print "uhel",angle
+        #otacaeni obrazku
+#         prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
+#         prilehla = (self.yt - self.yk)/2
+#         cosinus = (prilehla/prepona)
+#         angle = math.pow(-cosinus,-1)*(180/math.pi)+45
          
-           
-        self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
-        self.kos = pygame.transform.rotate(self.kos, angle)  
+         
+#         self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
+#         self.kos = pygame.transform.rotate(self.kos, angle)  
                 
         self.screen.blit(self.background,(0,0))
         self.screen.blit(self.point2, (self.xt,self.yt))
         self.screen.blit(self.point2, (self.xk,self.yk))
-        #self.screen.blit(self.point2, (self.xh,self.yh))
-        self.screen.blit(self.kos, (self.xObr,self.yObr))
+        self.screen.blit(self.point1, (self.xh,self.yh))
+#         self.screen.blit(self.kos, (self.xObr,self.yObr))
         
         print "y body"
         print self.yk
@@ -246,9 +267,11 @@ class EchoClientProtocol(WebSocketClientProtocol):
         
             
 if __name__ == '__main__':
-    
+    print "stae"
     pygame.init() 
     factory = WebSocketClientFactory(host, debug = False)
-    factory.protocol = EchoClientProtocol
+    factory.protocol = KinectClientProtocol
     connectWS(factory)
-    reactor.run()            
+    print "huh"
+    reactor.run()
+    print "konec"            
