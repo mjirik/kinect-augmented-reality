@@ -273,7 +273,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
                 #retval,camera_matrix,dist_coefs,rvecs,tvecs
                 print obj_points
                 print img_points
-                print size
+        
                 retval,camera_matrix,dist_coefs,rvecs,tvecs = cv2.calibrateCamera([obj_points],[img_points],size,camera_matrix,dist_coefs,flags=cv.CV_CALIB_USE_INTRINSIC_GUESS)
                 
                 kalib_params = (retval,camera_matrix,dist_coefs,rvecs,tvecs)
