@@ -11,7 +11,7 @@ Window_height = 700
 Window_width = 1300                               
 
 
-# body = {'Torso':{'X':300,'Y':50,'Z':50},
+#  body = {'Torso':{'X':300,'Y':50,'Z':50},
 #         'Neck':{'X':100,'Y':100,'Z':50},
 #         'Head':{'X':400,'Y':50,'Z':100}}
 body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-300),'Z':50},
