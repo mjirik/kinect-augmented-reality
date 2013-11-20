@@ -270,7 +270,7 @@ class EchoClientProtocol(WebSocketClientProtocol):
             
                 dist_coefs = np.zeros(4,'float32')
                 
-                #retval,camera_matrix,dist_coefs,rvecs,tvecs
+               
                 print obj_points
                 print img_points
         
