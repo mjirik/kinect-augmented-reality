@@ -46,7 +46,7 @@ Hkos="kos.png"
 bod1 = "red_dot.png"
 bod2="green_dot.png"
 bg="black.png"
-#bg="pozadiWhite.jpg"
+
 
 class KinectClientProtocol(WebSocketClientProtocol):
     def sendHello(self):
