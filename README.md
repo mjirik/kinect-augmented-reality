@@ -1,5 +1,13 @@
-Spuštìní aplikace 
+SpuÅ¡tÄ›nÃ­ aplikace 
 ========================
 
-Kalibraci spustíme prostøednictvím souboru kalibrace2.py. Vıstupem toho programu je kalibraèní matice.
-Pro spuštìní samotné aplikace slouí soubor sledovani.py s obrazovım vıstupem.
+Kalibraci spustÃ­me prostÅ™ednictvÃ­m souboru kalibrace2.py. VÃ½stupem toho programu je kalibraÄnÃ­ matice.
+
+    python kalibrace2.py
+
+
+
+Pro spuÅ¡tÄ›nÃ­ samotnÃ© aplikace slouÅ¾Ã­ soubor sledovani.py s obrazovÃ½m vÃ½stupem.
+
+    python sledovani.py
+   
