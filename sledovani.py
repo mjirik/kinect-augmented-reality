@@ -163,6 +163,19 @@ class KinectClientProtocol(WebSocketClientProtocol):
             kalib_mode = 'old'
             if mode == 'demo':
                 kalib_mode = 'off'
+                import datetime, time
+                t = datetime.datetime.now()
+                t_us = t.microsecond
+                
+                import numpy as np
+                
+                posunX = int(60*np.sin(t_us/100))
+                posunY = int(60*np.cos(t_us/100))
+                
+                krk = [neck["X"] + posunX ,neck["Y"] + posunY, neck["Z"]]
+                telo = [torso["X"] + posunX,torso["Y"] + posunY,torso["Z"]]
+                hlava = [head["X"] + posunX,head["Y"] + posunY,head["Z"]]
+               
             print kalib_mode
             telotr = kalibrace2.projekce(telo, self.kalib_params,mode = kalib_mode)
             krktr = kalibrace2.projekce(krk, self.kalib_params,mode = kalib_mode)
