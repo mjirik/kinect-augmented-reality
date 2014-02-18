@@ -7,6 +7,7 @@ import pickle
 import math
 import numpy as np
 import sys, pygame
+from pygame.locals import *
 import autobahn
 import twisted
 import random
@@ -17,6 +18,17 @@ from autobahn.websocket import WebSocketClientFactory, \
 import json
 import threading
 import kalibrace2
+import os
+
+
+
+
+fileList = os.listdir("images/")
+
+index = 0
+
+
+
 
 Window_height = 700
 Window_width = 1300
@@ -26,7 +38,8 @@ Window_width = 1300
 
 mode = 'demo'
 
-LOOP_TIME = 0.1
+LOOP_TIME = 0.3
+
 
 if mode == 'demo':
 
@@ -42,13 +55,16 @@ else:
 
 data={}
 
-Hkos="kos.png"
+# Hkos="kos.png"
+
 bod1 = "red_dot.png"
 bod2="green_dot.png"
 bg="black.png"
 
 
+
 class KinectClientProtocol(WebSocketClientProtocol):
+   
     def sendHello(self):
         self.sendMessage("skeleton")
             
@@ -64,8 +80,6 @@ class KinectClientProtocol(WebSocketClientProtocol):
         reactor.callLater(LOOP_TIME, self.tick)
     
     def update(self,body):
-        
-        
         self.body = body    
     
     def onMessage(self, msg, binary):
@@ -88,9 +102,9 @@ class KinectClientProtocol(WebSocketClientProtocol):
             
         reactor.callLater(LOOP_TIME, self.send_message)
         #self.send_message()
-
+    
     def tick(self):
-        #print 'tik'
+        print 'tik'
         #self.screen.fill((255,255,255))
         
         for event in pygame.event.get():
@@ -104,12 +118,15 @@ class KinectClientProtocol(WebSocketClientProtocol):
         #                 'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
         #                 'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
         #    print self.body
-                    
-        print "hhh"  
+        
+              
+         
         self.sledovani_run()  
         pygame.display.update()          
         pygame.display.flip()
-        reactor.callLater(LOOP_TIME, self.tick)        
+        reactor.callLater(LOOP_TIME, self.tick)
+        
+    
         
 #    def bod(self, x=None, y=None):    
 #        
@@ -131,6 +148,10 @@ class KinectClientProtocol(WebSocketClientProtocol):
 #        self.screen.blit(self.point, (x,y))
 #        pygame.display.update()     
     def sledovani_init(self):
+        
+             
+#         Hkos= "images/" + fileList[self.i]
+        
         pygame.init()
         pygame.display.set_caption('Vykresleni bodu')
         self.size = self.width, self.height = Window_width,Window_height
@@ -138,13 +159,13 @@ class KinectClientProtocol(WebSocketClientProtocol):
         self.background = pygame.image.load(bg).convert()
         self.point1 = pygame.image.load(bod1).convert_alpha()
         self.point2 = pygame.image.load(bod2).convert_alpha()
-        self.kos = pygame.image.load(Hkos).convert_alpha()
+#         self.kos = pygame.image.load(Hkos).convert_alpha()
         pygame.display.update()
         
 #         if mode != 'demo':
         with open('matice_kal2','rb') as f:
             self.kalib_params = pickle.load(f)
-        
+       
     def sledovani_run(self):
         print('sledovani')
         try: 
@@ -163,11 +184,11 @@ class KinectClientProtocol(WebSocketClientProtocol):
             kalib_mode = 'old'
             if mode == 'demo':
                 kalib_mode = 'off'
-                import datetime, time
+                import datetime
                 t = datetime.datetime.now()
                 t_us = t.microsecond
                 
-                import numpy as np
+             
                 
                 posunX = int(60*np.sin(t_us/100))
                 posunY = int(60*np.cos(t_us/100))
@@ -189,6 +210,8 @@ class KinectClientProtocol(WebSocketClientProtocol):
             
             self.xt = int(telotr[0])
             self.yt = int(telotr[1])
+            tmmm = t.second
+            print tmmm
             
             #pridani bodu
             self.xk = int(krktr[0])
@@ -235,16 +258,31 @@ class KinectClientProtocol(WebSocketClientProtocol):
 #        
         self.xObr = (self.xt - self.xk)/2 + self.xk
         self.yObr = (self.yt - self.yk)/2 + self.yk
+        global index
+        if index == 0:
+            i = 0
+    
+            index += 1
         
+        else:    
+            if index >= (len(fileList)-1):
+                index = 0
+                i = 0        
+            else:
+                i = index
+                index += 1  
+    
+        Hkos= "images/" + fileList[i]
+        self.kos = pygame.image.load(Hkos).convert_alpha()
         self.xObr -= self.kos.get_width()/2
         self.yObr -= self.kos.get_height()/2
                 
              
+#         Hkos= "images/" + fileList[self.i]
         
-        
-        self.height = self.yt - self.yk 
+        self.height = self.yt - self.yk
         self.width = self.kos.get_height()/1.3
-        self.kos = pygame.image.load(Hkos).convert_alpha()
+        
         
         #otacaeni obrazku
 #         prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
@@ -260,7 +298,7 @@ class KinectClientProtocol(WebSocketClientProtocol):
         self.screen.blit(self.point2, (self.xt,self.yt))
         self.screen.blit(self.point2, (self.xk,self.yk))
         self.screen.blit(self.point1, (self.xh,self.yh))
-#         self.screen.blit(self.kos, (self.xObr,self.yObr))
+        self.screen.blit(self.kos, (self.xObr,self.yObr))
         
         print "y body"
         print self.yk
