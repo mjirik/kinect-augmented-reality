@@ -16,3 +16,13 @@ Spuštění kinect serveru
 
     cd projects/gerhat/src/kinectserver/build
     ./kinect_server
+
+Získání obrázku
+======
+
+    stazene/openNI/.../samples/bin/x64-release
+    ./sample
+    
+    m - obrací směr
+    3 - zobrazí RGB kameru
+    1 - hloubková mapa
