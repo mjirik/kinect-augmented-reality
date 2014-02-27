@@ -11,3 +11,8 @@ Pro spuštění samotné aplikace slouží soubor sledovani.py s obrazovým výs
 
     python sledovani.py
    
+Spuštění kinect serveru
+======
+
+    cd projects/gerhat/src/kinectserver/build
+    ./kinect_server
