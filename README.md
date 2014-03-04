@@ -31,10 +31,12 @@ Příprava video dat
 ==========
 
 1)Převod videa na JPG
+
     Program: Free Video to JPG Converter http://www.slunecnice.cz/sw/free-video-to-jpg-converter/
     Použítí:  zvolit vstupní a výstupní adresář, volba potřebné extrakce (every frame)
   
 2)Změna rozměrů obrázků
+
     Program: JPEG Resampler 2010 http://www.slunecnice.cz/sw/jpeg-resampler/
     Použití: zvolit zdroj a cíl, volba zmenšení na pevná šířka a výška
     
