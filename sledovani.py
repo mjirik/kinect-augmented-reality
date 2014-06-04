@@ -248,8 +248,8 @@ class KinectClientProtocol(WebSocketClientProtocol):
         
         scale =  im_res /sk_res
         
-        a1 = np.array([320,320])
-        a2 = np.array([0.4, 0.4])
+        a1 = np.array([378,320])
+        a2 = np.array([0.37, 0.4])
         
         #a1 = sk_res*0.5
         #a2 = scale

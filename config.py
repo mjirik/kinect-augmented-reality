@@ -11,7 +11,7 @@ min_count_of_matches = 10
 
 """ sledovani """
 kinect_server_adress = "ws://192.168.1.100:9002"
-LOOP_TIME = 0.5
+LOOP_TIME = 0.15
 window_width = 1500
 window_height = 900
 background = "black.png"
