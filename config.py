@@ -11,7 +11,7 @@ min_count_of_matches = 10
 
 """ sledovani """
 kinect_server_adress = "ws://192.168.1.100:9002"
-LOOP_TIME = 1.03
+LOOP_TIME = 0.5
 window_width = 1500
 window_height = 900
 background = "black.png"
@@ -21,7 +21,7 @@ green_dot = "green_dot.png"
 im_folder = "im/"
 im_directory = "obr/"
 # MODE = "normal"
-MODE = "demo"
+MODE = "dem"
 calibration_mode = "ransac"
 # rotate_and_scale_of_image = "yes"
 rotate_and_scale_of_image = "no"
@@ -31,8 +31,8 @@ point_neck = "no"
 point_head = "no"
 image = "yes"
 
-spacebar_to_toggle_images = "no"
-spacebar_to_toggle_directory = "yes"
+spacebar_to_toggle_images = "yes"
+spacebar_to_toggle_directory = "no"
 
 
 
