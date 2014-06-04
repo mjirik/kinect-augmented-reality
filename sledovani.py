@@ -178,7 +178,7 @@ class KinectClientProtocol(WebSocketClientProtocol):
             self.yh = int(hlavatr[1])
             
         except Exception as e:
-            print "problem v prijate zprave ", e
+            print "problem v prijate zprave  ", e
             self.xt = int(0)
             self.yt = int(0)
             
