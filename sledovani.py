@@ -17,29 +17,19 @@ from autobahn.websocket import WebSocketClientFactory, \
                                connectWS
 import json
 import threading
-import kalibrace2
 import os
+import config
 
-
-
-
-fileList = os.listdir("images/")
-
+fileList2 = os.listdir(config.im_folder)
+fileList3 = os.listdir(config.im_directory)
 index = 0
+a = 0
+Window_height = config.window_height    
+Window_width = config.window_width
 
+mode = config.MODE
 
-
-
-Window_height = 700
-Window_width = 1300
-
-# Window_height = 550
-# Window_width = 1100
-
-mode = 'demo'
-
-LOOP_TIME = 0.3
-
+loop = config.LOOP_TIME
 
 if mode == 'demo':
 
@@ -51,17 +41,16 @@ if mode == 'demo':
     v1.start()    
     
 else:
-    host = "ws://147.228.47.141:9002" 
+#     host = "ws://147.228.47.141:9002" 
+    host = config.kinect_server_adress #"ws://192.168.1.100:9002"  
 
 data={}
 
-# Hkos="kos.png"
-
-bod1 = "red_dot.png"
-bod2="green_dot.png"
-bg="black.png"
 
 
+bod1 = config.red_dot
+bod2= config.green_dot
+bg = config.background
 
 class KinectClientProtocol(WebSocketClientProtocol):
    
@@ -72,12 +61,12 @@ class KinectClientProtocol(WebSocketClientProtocol):
         self.sendMessage("skeleton")
  
     def onOpen(self):
-        print "op"
+        #print "op"
         self.sledovani_init()
         self.sendHello()
         self.stav = 'sledovani'
         self.msg = ''
-        reactor.callLater(LOOP_TIME, self.tick)
+        reactor.callLater(loop, self.tick)
     
     def update(self,body):
         self.body = body    
@@ -86,72 +75,35 @@ class KinectClientProtocol(WebSocketClientProtocol):
         print "Got echo: " + msg
         
         self.msg = msg
-        #self.factory.app.reactor.callLater(LOOP_TIME, self.send_message)
-        #import pdb; pdb.set_trace()
-        
         
         if len(msg) > 2:
             data = json.loads( msg )
          
-            self.body = data[0]
-#             if self.stav == 'sledovani':
-#                 self.sledovani_run()
-            
-            pygame.display.update()
-            
-            
-        reactor.callLater(LOOP_TIME, self.send_message)
-        #self.send_message()
-    
+            self.body = data[0]    
+            pygame.display.update()  
+        reactor.callLater(loop, self.send_message)
+   
     def tick(self):
-        print 'tik'
-        #self.screen.fill((255,255,255))
-        
+        global a 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 reactor.stop() # just stop somehow
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                if config.spacebar_to_toggle_images == "yes":  
+                    a = self.changeOfIndex(a,fileList2)
+                if config.spacebar_to_toggle_directory == "yes":
+                    a = self.changeOfIndex(a,fileList3)
+                
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 reactor.stop() # just stop somehow
-                
-        #if mode == 'demo':    
-        #    self.body = {'Torso':{'X':(Window_width/2),'Y':(Window_height-400),'Z':50},
-        #                 'Neck':{'X':(Window_width/2),'Y':(Window_height-200),'Z':50},
-        #                 'Head':{'X':(Window_width/2),'Y':(Window_height-100),'Z':50}}
-        #    print self.body
-        
-              
+        print "a=", a
          
         self.sledovani_run()  
-        pygame.display.update()          
-        pygame.display.flip()
-        reactor.callLater(LOOP_TIME, self.tick)
-        
-    
-        
-#    def bod(self, x=None, y=None):    
-#        
-#        if x == None:
-#            self.px = random.randint(Window_width*0.05,Window_width*0.9)
-#            self.py = random.randint(Window_height*0.05,Window_height*0.9)
-#        else:
-#            self.px = x
-#            self.py = y
-#            
-#        self.background=pygame.image.load(bg).convert()
-#        self.point2=pygame.image.load(bod2).convert_alpha()   
-#        pygame.display.set_caption('Vykresleni bodu')
-#        size = self.width, self.height = Window_width,Window_height
-#        self.screen = pygame.display.set_mode(size, 0, 32)
-#        self.screen.fill((255, 255, 255))
-#
-#        self.screen.blit(self.background,(0,0))
-#        self.screen.blit(self.point, (x,y))
-#        pygame.display.update()     
+        pygame.display.update()
+        reactor.callLater(loop, self.tick)
+        print fileList3[a]
+            
     def sledovani_init(self):
-        
-             
-#         Hkos= "images/" + fileList[self.i]
-        
         pygame.init()
         pygame.display.set_caption('Vykresleni bodu')
         self.size = self.width, self.height = Window_width,Window_height
@@ -159,10 +111,8 @@ class KinectClientProtocol(WebSocketClientProtocol):
         self.background = pygame.image.load(bg).convert()
         self.point1 = pygame.image.load(bod1).convert_alpha()
         self.point2 = pygame.image.load(bod2).convert_alpha()
-#         self.kos = pygame.image.load(Hkos).convert_alpha()
         pygame.display.update()
         
-#         if mode != 'demo':
         with open('matice_kal2','rb') as f:
             self.kalib_params = pickle.load(f)
        
@@ -172,48 +122,56 @@ class KinectClientProtocol(WebSocketClientProtocol):
             torso = self.body["Torso"]
             neck = self.body["Neck"]
             head = self.body["Head"]
-            #import pdb; pdb.set_trace()
             krk = [neck["X"],neck["Y"], neck["Z"]]
             telo = [torso["X"],torso["Y"],torso["Z"]]
             hlava = [head["X"],head["Y"],head["Z"]]
+            
             print krk
-            print torso
-            print hlava
-            
-            
-            kalib_mode = 'old'
+# prevod z +/- 600 na 0 az 640
+             
+            krk = self.__getImageCoordinatesFromSkeletonCoordinates(-np.array(krk[:2]))
+            telo = self.__getImageCoordinatesFromSkeletonCoordinates(-np.array(telo[:2]))
+            hlava = self.__getImageCoordinatesFromSkeletonCoordinates(-np.array(hlava[:2]))
+           
+            print "po prepoctu do obazovych sour"
+            #print krk
+            print telo
+            #print hlava
+        
+            kalib_mode = config.calibration_mode
             if mode == 'demo':
                 kalib_mode = 'off'
+                kalib_mode = config.calibration_mode
                 import datetime
                 t = datetime.datetime.now()
-                t_us = t.microsecond
+                t_us = t.second
                 
-             
+                posunX = int(60*np.sin(3.14*t_us/60))
+                posunY = int(60*np.cos(3.14*t_us/60))
                 
-                posunX = int(60*np.sin(t_us/100))
-                posunY = int(60*np.cos(t_us/100))
-                
-                krk = [neck["X"] + posunX ,neck["Y"] + posunY, neck["Z"]]
-                telo = [torso["X"] + posunX,torso["Y"] + posunY,torso["Z"]]
-                hlava = [head["X"] + posunX,head["Y"] + posunY,head["Z"]]
-               
-            print kalib_mode
-            telotr = kalibrace2.projekce(telo, self.kalib_params,mode = kalib_mode)
-            krktr = kalibrace2.projekce(krk, self.kalib_params,mode = kalib_mode)
-            hlavatr = kalibrace2.projekce(hlava, self.kalib_params,mode = kalib_mode)
+                krktr = [neck["X"] + posunX ,neck["Y"] + posunY, neck["Z"]]
+                telotr = [torso["X"] + posunX,torso["Y"] + posunY,torso["Z"]]
+                hlavatr = [head["X"] + posunX,head["Y"] + posunY,head["Z"]]
             
-            print "po kalibraci "
-            print "torso", telotr
-            print "neck", krktr
-            print "head", hlavatr
+            else:
+                print "pred kalibraci "
+                print "telo", telo
+    #             telotr = kalibrace2.projekce(telo, self.kalib_params,mode = kalib_mode)
+    #             krktr = kalibrace2.projekce(krk, self.kalib_params,mode = kalib_mode)
+    #             hlavatr = kalibrace2.projekce(hlava, self.kalib_params,mode = kalib_mode)
+    
+                telotr = self.projekce(telo, self.kalib_params,mode = kalib_mode)
+                krktr = self.projekce(krk, self.kalib_params,mode = kalib_mode)
+                hlavatr = self.projekce(hlava, self.kalib_params,mode = kalib_mode)
             
-            
+                print "po kalibraci "
+                print "telo", telotr
+             #   print "neck", krktr
+              #  print "head", hlavatr
+#                    
             self.xt = int(telotr[0])
             self.yt = int(telotr[1])
-            tmmm = t.second
-            print tmmm
             
-            #pridani bodu
             self.xk = int(krktr[0])
             self.yk = int(krktr[1])
             
@@ -221,29 +179,16 @@ class KinectClientProtocol(WebSocketClientProtocol):
             self.yh = int(hlavatr[1])
             
         except Exception as e:
-            print "problem v prijate zprave" 
+            print "problem v prijate zprave ", e
+            self.xt = int(0)
+            self.yt = int(0)
             
-        
-        
-        
-        
-        
-       # zmena velikosti obrazku podle vzdalenosti
-#        vzdalenost = [1,1,torso["Z"]]
-#        self.vz = int(vzdalenost[2]/500)
-#        
-#        print vzdalenost[2]
-#        self.width = 600/self.vz
-#        self.height = 800/self.vz
-        
-        
-        
-#        self.width = abs(krk[1]-telo[1])*2
-#        self.height = abs(krk[1]-telo[1])*2
-        
-        
-#        self.point2 = pygame.transform.scale(self.point2, (int(self.width), int(self.height)))
-        
+            self.xk = int(0)
+            self.yk = int(0)
+            
+            self.xh = int(0)
+            self.yh = int(0)
+              
         self.xt -= self.point2.get_width()/2
         self.yt -= self.point2.get_height()/2
         
@@ -253,76 +198,93 @@ class KinectClientProtocol(WebSocketClientProtocol):
         self.xk -= self.point2.get_width()/2
         self.yk -= self.point2.get_height()/2
         
-#        self.xh -= self.point2.get_width()/2
-#        self.yh -= self.point2.get_height()/2
-#        
+        self.xh -= self.point2.get_width()/2
+        self.yh -= self.point2.get_height()/2
+        
         self.xObr = (self.xt - self.xk)/2 + self.xk
         self.yObr = (self.yt - self.yk)/2 + self.yk
-        global index
-        if index == 0:
-            i = 0
-    
-            index += 1
         
-        else:    
-            if index >= (len(fileList)-1):
-                index = 0
-                i = 0        
-            else:
-                i = index
-                index += 1  
-    
-        Hkos= "images/" + fileList[i]
-        self.kos = pygame.image.load(Hkos).convert_alpha()
+        global index
+        
+        if config.spacebar_to_toggle_images == "yes": 
+            Hkos = config.im_folder + fileList2[a]
+        if config.spacebar_to_toggle_directory == "yes":    
+            b = os.listdir(config.im_directory + fileList3[a])
+            index = self.changeOfIndex(index,b)    
+            Hkos = config.im_directory + fileList3[a]+"/" + b[index]  
+                          
+        self.kos = pygame.image.load(Hkos).convert_alpha()      
         self.xObr -= self.kos.get_width()/2
         self.yObr -= self.kos.get_height()/2
-                
-             
-#         Hkos= "images/" + fileList[self.i]
         
         self.height = self.yt - self.yk
         self.width = self.kos.get_height()/1.3
         
-        
-        #otacaeni obrazku
-#         prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
-#         prilehla = (self.yt - self.yk)/2
-#         cosinus = (prilehla/prepona)
-#         angle = math.pow(-cosinus,-1)*(180/math.pi)+45
-         
-         
-#         self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
-#         self.kos = pygame.transform.rotate(self.kos, angle)  
+        if config.rotate_and_scale_of_image == "yes": 
+            prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
+            prilehla = (self.yt - self.yk)/2
+            cosinus = (prilehla/prepona)
+            angle = math.pow(-cosinus,-1)*(180/math.pi)+45 
+            self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
+            self.kos = pygame.transform.rotate(self.kos, angle)  
                 
         self.screen.blit(self.background,(0,0))
-        self.screen.blit(self.point2, (self.xt,self.yt))
-        self.screen.blit(self.point2, (self.xk,self.yk))
-        self.screen.blit(self.point1, (self.xh,self.yh))
-        self.screen.blit(self.kos, (self.xObr,self.yObr))
-        
-        print "y body"
-        print self.yk
-        print self.yt
-        print self.yObr
-        
-        
+        if config.point_torso == "yes": 
+            self.screen.blit(self.point2, (self.xt,self.yt))
+        if config.point_neck == "yes":    
+            self.screen.blit(self.point2, (self.xk,self.yk))
+        if config.point_head == "yes":    
+            self.screen.blit(self.point2, (self.xh,self.yh))
+        if config.image == "yes":
+            self.screen.blit(self.kos, (self.xObr,self.yObr))   
+        pygame.display.flip()
         pygame.display.update()
         
+    def __getImageCoordinatesFromSkeletonCoordinates(self, skcoor):
+        sk_res = np.array([1280, 960])
+        sk_res = np.array([1280, 960])
+        im_res =  np.array([640, 480])
+        sk_res = im_res*1.5
+        skcoor = np.array(skcoor)
         
+        scale =  im_res /sk_res
         
-#        x,y = pygame.mouse.get_pos()
-#        x -= point.get_width()/2
-#        y -= point.get_height()/2
-#        screen.blit(point, (x,y))
+        a1 = np.array([320,320])
+        a2 = np.array([0.4, 0.4])
         
-        
-            
+        #a1 = sk_res*0.5
+        #a2 = scale
+        return (skcoor*a2) + a1
+#         return np.array([10, 10])
+        #return (skcoor + sk_res*0.5)/scale
+    
+    def projekce(self,point, kalib_params, mode):
+    
+        if mode=='ransac':
+            import cv2
+            pt = np.float32([ [point[0],point[1]]]).reshape(-1,1,2)
+            ip = cv2.perspectiveTransform(pt, kalib_params)
+            proj_point = ip[0,0]    
+         
+        return proj_point 
+    
+    def changeOfIndex(self,aglob,fileList):
+        if aglob == 0:
+            aglob += 1
+        else:    
+            if aglob >= (len(fileList)-1):
+                aglob = 0       
+            else:
+                aglob += 1 
+                print "aglob",aglob            
+        return aglob 
+    
+   
+       
 if __name__ == '__main__':
-    print "stae"
     pygame.init() 
     factory = WebSocketClientFactory(host, debug = False)
     factory.protocol = KinectClientProtocol
     connectWS(factory)
-    print "huh"
     reactor.run()
     print "konec"            
