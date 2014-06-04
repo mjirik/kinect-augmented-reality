@@ -16,7 +16,6 @@ import skimage.measure
 import config
 
 plt.gray()
-plt.close('all')
 MIN_MATCH_COUNT = config.min_count_of_matches
 
 im1 = config.image_kinect
