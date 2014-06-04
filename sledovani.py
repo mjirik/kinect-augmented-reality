@@ -96,7 +96,6 @@ class KinectClientProtocol(WebSocketClientProtocol):
                 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 reactor.stop() # just stop somehow
-        print "a=", a
          
         self.sledovani_run()  
         pygame.display.update()
@@ -275,8 +274,7 @@ class KinectClientProtocol(WebSocketClientProtocol):
             if aglob >= (len(fileList)-1):
                 aglob = 0       
             else:
-                aglob += 1 
-                print "aglob",aglob            
+                aglob += 1            
         return aglob 
     
    
