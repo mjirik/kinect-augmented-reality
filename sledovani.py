@@ -219,13 +219,13 @@ class KinectClientProtocol(WebSocketClientProtocol):
         self.height = self.yt - self.yk
         self.width = self.kos.get_height()/1.3
         
-        if config.rotate_and_scale_of_image == "yes": 
-            prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
-            prilehla = (self.yt - self.yk)/2
-            cosinus = (prilehla/prepona)
-            angle = math.pow(-cosinus,-1)*(180/math.pi)+45 
-            self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
-            self.kos = pygame.transform.rotate(self.kos, angle)  
+#         if config.rotate_and_scale_of_image == "yes": 
+#             prepona = (math.sqrt(math.pow((self.xt-self.xk), 2)+math.pow((self.yt-self.yk),2))/2)
+#             prilehla = (self.yt - self.yk)/2
+#             cosinus = (prilehla/prepona)
+#             angle = math.pow(-cosinus,-1)*(180/math.pi)+45 
+#             self.kos = pygame.transform.scale(self.kos, (int(self.width), int(self.height)))       
+#             self.kos = pygame.transform.rotate(self.kos, angle)  
                 
         self.screen.blit(self.background,(0,0))
         if config.point_torso == "yes": 

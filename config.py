@@ -23,8 +23,7 @@ im_directory = "obr/"
 # MODE = "normal"
 MODE = "dem"
 calibration_mode = "ransac"
-# rotate_and_scale_of_image = "yes"
-rotate_and_scale_of_image = "no"
+
 
 point_torso = "no"
 point_neck = "no"
